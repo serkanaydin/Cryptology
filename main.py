@@ -20,17 +20,17 @@ back = Image.open('background.jpg')
 data = back.convert("RGB").tobytes()
 rsa_key_generation()
 
-symmetric_128: str = (hex(random.getrandbits(64)))[2:]
+symmetric_128_hex: str = (hex(random.getrandbits(128)))[2:]
 print("128 bit original")
-print(symmetric_128)
-symmetric_128 = np.fromstring(symmetric_128, dtype=np.uint8)
+print(symmetric_128_hex)
+symmetric_128 = np.fromstring(symmetric_128_hex, dtype=np.uint8)
 encrypted_128,trash,d = encryptSymmetric(symmetric_128)
 decrypted_128 = decryptSymmetric(symmetric_128,d)
 
-symmetric_256 = (hex(random.getrandbits(128)))[2:]
+symmetric_256_hex = (hex(random.getrandbits(256)))[2:]
 print("256 bit original")
-print(symmetric_256)
-symmetric_256 = np.fromstring(symmetric_256, dtype=np.uint8)
+print(symmetric_256_hex)
+symmetric_256 = np.fromstring(symmetric_256_hex, dtype=np.uint8)
 encrypted_256,trash,d = encryptSymmetric(symmetric_256)
 decrypted_256 = decryptSymmetric(encrypted_256,d)
 
@@ -42,14 +42,15 @@ encrypted_1024,trash,d = encryptSymmetric(symmetric_1024)
 decrypted_1024 = decryptSymmetric(encrypted_1024,d)
 print("hebele hübele")
 print(symmetric_1024)
-sign,keyForHMAC,d = signature(data, encrypted_128, symmetric_1024_hex, "-HMAC-SHA256-", back)
-decrypt(data, encrypted_128, keyForHMAC,n,d, "-HMAC-SHA256-", back, sign)
+sign,keyForHMAC,d = signature(data, symmetric_128_hex, symmetric_1024_hex, "-HMAC-SHA256-", back)
+print(encrypted_128)
+decrypt(data, symmetric_128_hex, keyForHMAC,n,d, "-HMAC-SHA256-", back, sign)
 
-enc = EncryptAES(data, encrypted_128, AES.MODE_CBC, 128, back)
-dec = DecryptAES(enc, encrypted_128, AES.MODE_CBC, 128, back)
+enc = EncryptAES(data, symmetric_128_hex, AES.MODE_CBC, 128, back)
+dec = DecryptAES(enc, symmetric_128_hex, AES.MODE_CBC, 128, back)
 
-enc = EncryptAES(data, encrypted_256, AES.MODE_CBC, 256, back)
-dec = DecryptAES(enc, encrypted_256, AES.MODE_CBC, 256, back)
+enc = EncryptAES(data, symmetric_256_hex, AES.MODE_CBC, 256, back)
+dec = DecryptAES(enc, symmetric_256_hex, AES.MODE_CBC, 256, back)
 
-enc = EncryptAES(data, encrypted_256, AES.MODE_CTR, 256, back)
-dec = DecryptAES(enc, encrypted_256, AES.MODE_CTR, 256, back)
+enc = EncryptAES(data, symmetric_256_hex, AES.MODE_CTR, 256, back)
+dec = DecryptAES(enc, symmetric_256_hex, AES.MODE_CTR, 256, back)

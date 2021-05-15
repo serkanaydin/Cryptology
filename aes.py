@@ -20,15 +20,19 @@ def convert_to_RGB(data):
 
 def EncryptAES(data, key, mode, name, image):
     global iv
+    key=''.join(map(str, str(key).replace("0x", "").replace("[", "").replace("'", "").replace(",", "").replace(" ",                                                                                                              "").replace(
+        "]", "")))
+    print("enc aes")
+    print(key)
     iv = Random.new().read(int(16))
     if mode != AES.MODE_CTR:
-        cipher = AES.new(bytearray(key), mode, iv)
+        cipher = AES.new(bytearray.fromhex(key), mode, iv)
         mode = "AES-CBC"
 
     else:
         nonce = Random.get_random_bytes(8)
         iv = Counter.new(64, nonce)
-        cipher = AES.new(bytearray(key), mode, counter=iv)
+        cipher = AES.new(bytearray.fromhex(key), mode, counter=iv)
         mode = "AES-CTR"
     encrypted = cipher.encrypt(pad(data))[:len(data)]
     encrypted_RGB = convert_to_RGB(encrypted)
@@ -39,11 +43,14 @@ def EncryptAES(data, key, mode, name, image):
 
 
 def DecryptAES(ciphertext, key, mode, name, image):
+    key = ''.join(map(str, str(key).replace("0x", "").replace("[", "").replace("'", "").replace(",", "").replace(" ","").replace( "]", "")))
+    print("dec aes")
+    print(key)
     if mode != AES.MODE_CTR:
-        decrypter = AES.new(bytearray(key), mode, iv)
+        decrypter = AES.new(bytearray.fromhex(key), mode, iv)
         mode = "AES-CBC"
     else:
-        decrypter = AES.new(bytearray(key), mode, counter=iv)
+        decrypter = AES.new(bytearray.fromhex(key), mode, counter=iv)
         mode = "AES-CTR"
     decrypted = decrypter.decrypt(ciphertext)[:len(ciphertext)]
     decrypted = convert_to_RGB(decrypted)
