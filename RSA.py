@@ -54,7 +54,7 @@ def rsa_key_generation():
     z = (p - 1) * (q - 1)
     e = random.choice(relativelyPrimesInRange(z))
     d = modInverse(e, z)
-    print(p, q, n, e, d)
+    return n,e,d
 
 
 def encryptSymmetric(arr):
@@ -62,8 +62,6 @@ def encryptSymmetric(arr):
 
     for byte in arr:
         encryptedList.append(pow(int(chr(byte), 16), e) % n)
-    print("encrypted")
-    print(encryptedList)
     return encryptedList, n, d
 
 
@@ -71,6 +69,4 @@ def decryptSymmetric(arr, d):
     decryptedList = []
     for byte in arr:
         decryptedList.append(hex(pow(byte, d) % n))
-    print("decrypted")
-    print(decryptedList)
     return decryptedList
